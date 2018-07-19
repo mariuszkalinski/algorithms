@@ -1,7 +1,7 @@
 const g = 9.81;
 const radiousFromDegrees = (deg) => deg * Math.PI / 180;
 
-function bulletPosition(angle, initialVelocity) {
+function recurencyBulletPosition(angle, initialVelocity) {
   let trajectory = [];
 
   const angleCos = Math.cos(radiousFromDegrees(angle));
@@ -28,4 +28,31 @@ function bulletPosition(angle, initialVelocity) {
   return trajectory;
 }
 
-bulletPosition(20, 5); // 20deg, 5m/s
+
+function loopBulletPosition(angle, initialVelocity, timeDistance) {
+  let trajectory = [];
+  let time = 0;
+  let horizontalDistanceAfterTime = 0;
+  let verticalDistanceAfterTime = 0;
+  const angleCos = Math.cos(radiousFromDegrees(angle));
+  const angleSin = Math.sin(radiousFromDegrees(angle));
+  
+  const initialHorizontalVelocity = initialVelocity * angleCos; // V0x
+  const initialVerticalVelocity = initialVelocity * angleSin; // V0y
+  
+  while(verticalDistanceAfterTime >= 0) {
+    horizontalDistanceAfterTime = initialHorizontalVelocity * time;
+    verticalDistanceAfterTime = initialVerticalVelocity * time - g/2 * time * time;
+    
+    time = time + timeDistance;
+    trajectory = [
+      ...trajectory,
+      [verticalDistanceAfterTime, horizontalDistanceAfterTime],
+    ];
+  }
+  
+  return trajectory;
+}
+
+console.info(recurencyBulletPosition(40, 15)); // 20deg, 5m/
+console.info(loopBulletPosition(40, 15)); // 20deg, 5m/
